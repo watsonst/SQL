@@ -1,0 +1,181 @@
+CREATE database topcities;
+
+drop table if exists country;
+
+create table country(
+	id int primary key,
+	name varchar (50) not null,
+	population int not null,
+	area varchar (50) not null,
+);
+
+insert into country(id, name, population, area)
+values
+ (1, 'United States', 327000000, 3717813),	(2, 'Mexico', 126190788, 758449),	(3, 'Canada', 37064562, 3855100),	(4, 'Cuba', 11181595, 42426);
+
+Select * from country;
+
+drop table if exists city;
+
+create table city(
+	id int primary key,
+	name varchar (50) not null,
+	population int not null,
+	country_id int not null,
+);
+
+insert into city(id, name, population, country_id)
+values
+ (1, 'New York', 22000000, 1),	(2, 'Mexico City', 10000000, 2),	(3, 'Los Angeles', 37064562, 1),	(4, 'Toronto', 2800000, 3),	(5, 'Chicago', 2700000, 1),	(6, 'Huston', 2200000, 1),	(7, 'Havana', 2100000, 4),	(8, 'Montreal', 1700000, 3),	(9, 'Ecatepec de Morelos', 1600000, 2),	(10, 'Philadelphia', 1500000, 1);
+
+
+Select * from city;
+
+
+
+Select name as city_name, population
+from city
+order by population asc;
+AS for columns
+
+
+select co.name as country_name, ci.name as city_name
+from city as ci
+join country as co
+on ci.country_id=co.id;
+AS for tables
+
+
+Select * 
+From city
+Where population > 2000000 AND name !='Toronto' AND name !='Mexico city' AND name !='Havana';
+
+Select *
+From city
+Where name Like '_hicago'; OR name Like 'H%'; TEXT OPERATIONS
+
+
+Select *
+from city
+where population between 2000000 and 10000000;
+
+Select *
+from city
+where country_id in (2,3,4);
+
+Select * 
+from country
+Join city
+on country.id=city.country_id;
+--insert into city(id, name, population, country_id)
+--values
+ --(11, 'Beijing', 22000000, 5);
+
+ Select * from country
+ full outer join city
+on country.id = city.country_id;
+
+
+insert into country(id, name, population, area)
+values
+ (12, 'Ireland', 327000000, 3717813);
+
+Select * from city left join country on  country.id = city.country_id
+
+Select * from country
+
+
+Select count(distinct country_id) from city
+
+Select min(population) as min, max(population) as max from city
+
+Select country_id as id, sum(population) as everyone 
+from city 
+group by country_id
+
+Select min(population) as min, max(population) as max, city.name
+from city;
+
+
+select name from city
+where country_id = (
+	select country_id
+	from city
+	where name = 'Chicago'
+);
+
+sub query below
+select population, name from city
+where population = (
+	select min(population)from city
+);
+
+select population, name from city
+where population = (
+	select max(population)from city
+);
+
+select c1.name as min_city, c1.population as min_pop, 
+       c2.name as max_city, c2.population as max_pop
+from city as c1
+join city as c2
+on c1.id=c2.id
+where c1.population = (
+	select min(population)from city
+) and c2.population = (
+	select max(population)from city
+);
+
+
+select name as min_city, population as min_pop from city
+where population = (
+	select min(population) from city
+) 
+Union
+select name as city, population as pop from city
+where population = (
+	select max(population) from city
+	)
+
+Select name, country_id 
+from city
+where country_id in (
+	select country_id from city where country_id != 1
+)
+
+Select name, country_id 
+from city
+where population > (
+	select avg(population) from city
+)
+
+
+Select name, country_id from city
+where exists (
+	select * from city where country_id != 1 --want name from this sub-query result
+)
+
+
+
+select name as city, population as pop from city -- doesnt work
+where population = (
+	select min(population) from city
+) 
+intersect
+select name as city, population as pop from city
+where population = (
+	select max(population) from city
+	)
+
+
+select country_id from city 
+intersect
+select id from country
+
+
+
+
+similar to left join
+select id from country
+EXCEPT
+select country_id from city 
